@@ -1,0 +1,18 @@
+[package]
+name = "portfolio"
+version = "0.1.0"
+edition = "2021"
+# Dioxus 0.7 needs a recent compiler (async fn in traits / RPITIT).
+rust-version = "1.83"
+description = "Personal web portfolio built with Dioxus, following Krocy's clean-architecture module structure."
+
+[dependencies]
+# Core + router. The web *renderer* is added by the `web` feature below.
+dioxus = { version = "0.7", features = ["router"] }
+# One-shot effect channel used by the base ViewModel (Krocy's Channel(BUFFERED)).
+futures = "0.3"
+
+[features]
+default = ["web"]
+# The only target for this project is the web.
+web = ["dioxus/web"]

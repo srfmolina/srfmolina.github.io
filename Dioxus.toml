@@ -1,0 +1,5 @@
+[application]
+name = "portfolio"
+
+[web.app]
+title = "Portfolio"
