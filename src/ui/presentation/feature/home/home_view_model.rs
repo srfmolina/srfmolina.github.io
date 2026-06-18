@@ -1,59 +1,42 @@
-//! Home screen ViewModel — the Dioxus mirror of Krocy's `XViewModel.kt`,
-//! built with the macro pattern from `reference/login.rs`.
+//! Home screen ViewModel — the Dioxus mirror of Krocy's `XViewModel.kt`.
+//!
+//! The home content is now static, language-keyed data on the i18n `Texts`
+//! tree, so this ViewModel currently holds no state and only keeps the standard
+//! `Init` lifecycle event. It is retained as the per-feature template and as the
+//! home for imminent screen-local state.
 
 use crate::ui::base::*;
 use crate::view_model;
 
-// --- STATE (data class HomeState(...) : UiState) ---
+// --- STATE ---
 #[derive(Clone, PartialEq)]
-pub struct HomeState {
-    pub greeting: String,
-}
+pub struct HomeState {}
 impl UiState for HomeState {}
 
-// --- EVENT (sealed interface HomeEvent : UiEvent) ---
+// --- EVENT ---
 pub enum HomeEvent {
+    /// First render. Currently a no-op.
     Init,
 }
 impl UiEvent for HomeEvent {}
 
-// --- EFFECT (sealed interface HomeEffect : UiEffect) ---
-// The hello-world screen emits no one-shot effects yet.
+// --- EFFECT ---
 pub enum HomeEffect {}
 impl UiEffect for HomeEffect {}
 
 // --- VIEWMODEL ---
-// One line writes the struct + `from_core` / `core` (the ViewModelCarrier impl).
 view_model!(pub HomeViewModel<HomeState, HomeEffect>);
 
 impl BaseViewModel for HomeViewModel {
     type Event = HomeEvent;
 
     fn create_initial_state() -> HomeState {
-        HomeState {
-            greeting: "Hello, world!".to_string(),
-        }
+        HomeState {}
     }
 
-    // override suspend fun handleEvent(event: HomeEvent)
     async fn handle_event(self, event: HomeEvent) {
         match event {
-            HomeEvent::Init => {
-                self.set_state(|_| Self::create_initial_state());
-            }
+            HomeEvent::Init => {}
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn initial_state_greets_the_world() {
-        assert_eq!(
-            HomeViewModel::create_initial_state().greeting,
-            "Hello, world!"
-        );
     }
 }

@@ -194,9 +194,13 @@ pub trait BaseViewModel: ViewModelCarrier {
     }
 }
 
-/// Creates the ViewModel for the current screen and provides it through context,
-/// so any descendant can fetch it with `use_context::<YourViewModel>()` — no prop
-/// drilling. The Dioxus counterpart of obtaining a screen's `viewModel()` in Compose.
+/// Creates the ViewModel for the current screen.
+///
+/// The ViewModel is **not** provided to the subtree: descendants never fetch a
+/// ViewModel from context. To let a child trigger one of this ViewModel's
+/// events, pass the launching function down as an `EventHandler` prop. The one
+/// app-global exception (read-only `Language` / `Theme`) is provided explicitly
+/// by `App`, not here.
 ///
 /// ```rust,ignore
 /// #[component]
@@ -221,9 +225,6 @@ pub fn use_view_model<VM: BaseViewModel>() -> VM {
         effect_tx,
         effect_rx,
     });
-
-    // Inject the ViewModel into the subtree.
-    use_context_provider(|| vm);
 
     vm
 }
