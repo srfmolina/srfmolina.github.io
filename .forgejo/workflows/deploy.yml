@@ -1,0 +1,49 @@
+name: Deploy to Codeberg Pages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: docker
+    container:
+      image: rust:1-bookworm
+    steps:
+      - name: Checkout
+        uses: https://code.forgejo.org/actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Add wasm target
+        run: rustup target add wasm32-unknown-unknown
+
+      - name: Install Dioxus CLI
+        run: cargo install dioxus-cli --version 0.7.9 --locked
+
+      - name: Build web bundle (release)
+        run: dx build --release --platform web
+
+      - name: Verify build output exists
+        run: test -f target/dx/portfolio/release/web/public/index.html
+
+      - name: Publish to pages branch
+        env:
+          ACTOR: ${{ github.actor }}
+          AUTO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -e
+          # Prefer an explicitly-configured PAT if present; otherwise use the
+          # ephemeral auto token. Never echo $TOKEN.
+          TOKEN="${DEPLOY_TOKEN:-$AUTO_TOKEN}"
+          cd target/dx/portfolio/release/web/public
+          git init -b pages
+          git config user.name "Codeberg CI"
+          git config user.email "ci@codeberg.local"
+          git add -A
+          git commit -m "Deploy ${TAG}"
+          git push --force "https://${ACTOR}:${TOKEN}@codeberg.org/srfmolina/pages.git" pages
