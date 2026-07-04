@@ -15,7 +15,14 @@ jobs:
       image: rust:1-bookworm
     steps:
       - name: Checkout
-        uses: https://code.forgejo.org/actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        # `actions/checkout` is a JavaScript action; Forgejo runs it with `node`
+        # inside the job container, but `rust:1-bookworm` ships no Node.js — the
+        # run failed with `node` not found (exit 127) before the build. A shell
+        # `git clone` needs no Node (git ships in the rust image), and the repo
+        # is public, so an anonymous shallow clone of the tag is enough.
+        run: |
+          git clone --depth 1 --branch "${{ github.ref_name }}" \
+            "${{ github.server_url }}/${{ github.repository }}.git" .
 
       - name: Add wasm target
         run: rustup target add wasm32-unknown-unknown
