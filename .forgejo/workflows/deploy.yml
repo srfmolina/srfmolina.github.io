@@ -12,11 +12,14 @@ jobs:
   deploy:
     runs-on: codeberg-medium
     container:
-      image: rust:1-bookworm
+      # Debian 13 "trixie" ships glibc 2.41. The prebuilt `dx` binary installed
+      # below is linked against glibc 2.39, which Debian 12 "bookworm" (glibc
+      # 2.36) is too old to run (`GLIBC_2.39 not found`).
+      image: rust:1-trixie
     steps:
       - name: Checkout
         # `actions/checkout` is a JavaScript action; Forgejo runs it with `node`
-        # inside the job container, but `rust:1-bookworm` ships no Node.js — the
+        # inside the job container, but the `rust` image ships no Node.js — the
         # run failed with `node` not found (exit 127) before the build. A shell
         # `git clone` needs no Node (git ships in the rust image), and the repo
         # is public, so an anonymous shallow clone of the tag is enough.
