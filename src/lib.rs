@@ -4,6 +4,8 @@
 //! `ui::base`, `ui::presentation::feature`, `ui::presentation::navigation`, `ui::app`.
 
 pub mod ui;
+pub mod data;
+pub mod domain;
 
 // The `view_model!` macro (in `ui::base::macros`) expands to `$crate::base::…`.
 // Re-export the base module at the crate root so that path keeps resolving while

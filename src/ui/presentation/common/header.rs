@@ -1,12 +1,13 @@
 //! Persistent header chrome — brand, in-page nav, theme toggle, language
-//! switcher. Lives above the router in `App`, which owns the app ViewModel and
-//! supplies the mutation callbacks as `EventHandler` props. The header never
-//! sees a ViewModel.
+//! switcher. Rendered inside the router by the `AppChrome` layout (Krocy's
+//! `Scaffold`), which supplies the mutation callbacks as `EventHandler` props.
+//! The header never sees a ViewModel.
 
 use dioxus::prelude::*;
 
 use crate::ui::app_view_model::Theme;
 use crate::ui::i18n::{Language, Texts};
+use crate::ui::presentation::navigation::route::Route;
 
 /// The site header. Reads localized labels from `Texts`; raises theme/language
 /// changes through the `on_*` callbacks supplied by the parent.
@@ -21,13 +22,13 @@ pub fn Header(
 
     rsx! {
         header { class: "header",
-            a { class: "brand", href: "#top",
+            Link { to: Route::HomeScreen, class: "brand",
                 span { class: "brand-badge", "S" }
                 span { class: "brand-name", "srfmolina" }
             }
             nav { class: "nav",
-                a { class: "nav-link", href: "#projects", "{texts.nav.projects}" }
-                a { class: "nav-link", href: "#stack", "{texts.nav.stack}" }
+                Link { to: Route::HomeScreen, class: "nav-link", "{texts.nav.home}" }
+                Link { to: Route::ProjectsScreen, class: "nav-link", "{texts.nav.projects}" }
                 button {
                     class: "theme-toggle",
                     "aria-label": "Toggle colour theme",
