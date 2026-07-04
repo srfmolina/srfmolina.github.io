@@ -34,7 +34,9 @@ pub fn Header(
                     "aria-label": "Toggle colour theme",
                     onclick: move |_| on_toggle_theme.call(()),
                     span { class: "theme-toggle-icon", ThemeIcon { dark: theme.is_dark() } }
-                    if theme.is_dark() { "{texts.theme.light}" } else { "{texts.theme.dark}" }
+                    span { class: "theme-toggle-label",
+                        if theme.is_dark() { "{texts.theme.light}" } else { "{texts.theme.dark}" }
+                    }
                 }
                 LanguageDropdown { current: language, on_select: on_set_language }
             }
