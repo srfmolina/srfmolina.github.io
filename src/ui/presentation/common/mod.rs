@@ -1,5 +1,6 @@
-//! Shared chrome shown on every screen (header, footer). Rendered by `App`
-//! around the router, not by individual screens.
+//! Shared chrome shown on every screen (header, footer). Rendered by the
+//! router's `AppChrome` layout (Krocy's persistent `Scaffold`), not by
+//! individual screens.
 
 mod footer;
 mod header;

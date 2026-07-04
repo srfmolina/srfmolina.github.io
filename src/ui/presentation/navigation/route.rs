@@ -8,9 +8,14 @@
 use dioxus::prelude::*;
 
 use crate::ui::presentation::feature::home::home_screen::HomeScreen;
+use crate::ui::presentation::feature::projects::projects_screen::ProjectsScreen;
+use crate::ui::presentation::navigation::navigation_component::AppChrome;
 
 #[derive(Routable, Clone, Debug, PartialEq)]
 pub enum Route {
+    #[layout(AppChrome)]
     #[route("/")]
     HomeScreen,
+    #[route("/projects")]
+    ProjectsScreen,
 }

@@ -28,8 +28,8 @@ pub struct Tech {
 
 /// Header navigation labels.
 pub struct NavTexts {
+    pub home: &'static str,
     pub projects: &'static str,
-    pub stack: &'static str,
 }
 
 /// Theme-toggle labels (the word shown next to the icon).
@@ -41,6 +41,16 @@ pub struct ThemeTexts {
 /// Footer copy.
 pub struct FooterTexts {
     pub meta: &'static str,
+}
+
+/// Projects-screen copy (localized prose). Host names stay code literals.
+pub struct ProjectsTexts {
+    pub eyebrow: &'static str,
+    pub title: &'static str,
+    pub lead: &'static str,
+    pub view_repo: &'static str,
+    pub loading: &'static str,
+    pub error: &'static str,
 }
 
 /// Hero-section copy.
@@ -72,6 +82,7 @@ pub struct Texts {
     pub nav: NavTexts,
     pub theme: ThemeTexts,
     pub home: HomeTexts,
+    pub projects: ProjectsTexts,
     pub footer: FooterTexts,
 }
 
@@ -88,7 +99,7 @@ impl Texts {
 
 pub const ENGLISH_TEXTS: Texts = Texts {
     lang: "en",
-    nav: NavTexts { projects: "Projects", stack: "Stack" },
+    nav: NavTexts { home: "Home", projects: "Projects" },
     theme: ThemeTexts { light: "LIGHT", dark: "DARK" },
     home: HomeTexts {
         hero: HeroTexts {
@@ -119,12 +130,20 @@ pub const ENGLISH_TEXTS: Texts = Texts {
             Tech { name: "CUDA", cat: "GPU" },
         ],
     },
+    projects: ProjectsTexts {
+        eyebrow: "Open source",
+        title: "Projects",
+        lead: "A selection of things I've built and open-sourced. Each card links straight to the repository, hosted on GitHub or Codeberg.",
+        view_repo: "View repository",
+        loading: "Loading…",
+        error: "Couldn't load the projects. Please try again later.",
+    },
     footer: FooterTexts { meta: "© 2026 · built with care" },
 };
 
 pub const SPANISH_TEXTS: Texts = Texts {
     lang: "es",
-    nav: NavTexts { projects: "Proyectos", stack: "Stack" },
+    nav: NavTexts { home: "Inicio", projects: "Proyectos" },
     theme: ThemeTexts { light: "CLARO", dark: "OSCURO" },
     home: HomeTexts {
         hero: HeroTexts {
@@ -154,6 +173,14 @@ pub const SPANISH_TEXTS: Texts = Texts {
             Tech { name: "Qiskit", cat: "Cuántica" },
             Tech { name: "CUDA", cat: "GPU" },
         ],
+    },
+    projects: ProjectsTexts {
+        eyebrow: "Código abierto",
+        title: "Proyectos",
+        lead: "Una selección de cosas que he creado y publicado como código abierto. Cada tarjeta enlaza directamente con el repositorio, alojado en GitHub o Codeberg.",
+        view_repo: "Ver repositorio",
+        loading: "Cargando…",
+        error: "No se pudieron cargar los proyectos. Inténtalo de nuevo más tarde.",
     },
     footer: FooterTexts { meta: "© 2026 · hecho con cariño" },
 };
@@ -197,5 +224,15 @@ mod tests {
         let en_names: Vec<&str> = en.iter().map(|t| t.name).collect();
         assert_eq!(en_names, ["Kotlin", "Rust", "Haskell", "Python", "Qiskit", "CUDA"]);
         assert_ne!(en[0].cat, es[0].cat); // Mobile vs Móvil
+    }
+
+    #[test]
+    fn projects_copy_is_localized() {
+        let en = &Texts::for_language(Language::English).projects;
+        let es = &Texts::for_language(Language::Spanish).projects;
+        assert_eq!(en.title, "Projects");
+        assert_eq!(es.title, "Proyectos");
+        assert_ne!(en.lead, es.lead);
+        assert_ne!(en.view_repo, es.view_repo);
     }
 }

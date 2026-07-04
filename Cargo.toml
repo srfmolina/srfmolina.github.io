@@ -11,6 +11,15 @@ description = "Personal web portfolio built with Dioxus, following Krocy's clean
 dioxus = { version = "0.7", features = ["router"] }
 # One-shot effect channel used by the base ViewModel (Krocy's Channel(BUFFERED)).
 futures = "0.3"
+# JSON (de)serialization for the data layer's DTOs.
+serde = { version = "1", features = ["derive"] }
+# HTTP client. default-features off keeps it light (no native TLS/tokio);
+# on wasm it always uses the browser fetch backend, on host it still compiles.
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+
+[dev-dependencies]
+# Used by unit tests to parse JSON fixtures with serde_json::from_str.
+serde_json = "1"
 
 [features]
 default = ["web"]

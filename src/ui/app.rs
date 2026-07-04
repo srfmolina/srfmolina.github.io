@@ -1,17 +1,17 @@
 //! The application root — the Dioxus mirror of Krocy's `ui/App.kt`.
 //!
-//! Owns the persistent chrome (header + footer) shown on every screen and the
-//! single source of app-global state (the `AppViewModel`). Routed screens never
-//! receive the ViewModel; instead `App` provides the language and theme as
-//! read-only context (`ReadSignal<Language>` / `ReadSignal<Theme>`), and feeds
-//! the chrome its mutation callbacks as `EventHandler` props.
+//! Owns the single source of app-global state (`AppViewModel`) and the themed
+//! page wrapper. The persistent chrome (header/footer) is the router's `Scaffold`
+//! (`AppChrome`), so `App` provides what the chrome needs as context — read-only
+//! `Language`/`Theme` and the header callbacks (`ChromeCallbacks`) — plus the
+//! app's use cases (`UseCases`), and renders the `NavHost`.
 
 use dioxus::prelude::*;
 
 use crate::ui::app_view_model::{AppEvent, AppViewModel, Theme};
 use crate::ui::base::*;
 use crate::ui::i18n::Language;
-use crate::ui::presentation::common::{Footer, Header};
+use crate::ui::presentation::navigation::navigation_component::ChromeCallbacks;
 use crate::ui::presentation::navigation::NavigationComponent;
 
 /// Bundled stylesheet (CSS custom properties, themes, component styles).
@@ -31,6 +31,12 @@ pub fn App() -> Element {
     use_context_provider(|| ReadSignal::<Language>::from(language));
     use_context_provider(|| ReadSignal::<Theme>::from(theme));
 
+    // Header callbacks for the chrome (which now lives inside the router).
+    let on_toggle_theme = EventHandler::new(move |_| app_vm.launch_event(AppEvent::ToggleTheme));
+    let on_set_language = EventHandler::new(move |l: Language| app_vm.launch_event(AppEvent::SetLanguage(l)));
+    use_context_provider(move || ChromeCallbacks { on_toggle_theme, on_set_language });
+    use_context_provider(|| crate::data::UseCases::new());
+
     rsx! {
         document::Stylesheet { href: MAIN_CSS }
         document::Link { rel: "preconnect", href: "https://fonts.googleapis.com" }
@@ -41,14 +47,7 @@ pub fn App() -> Element {
 
         div { class: "page", "data-theme": "{theme().data_attr()}",
             div { class: "grain", "aria-hidden": "true" }
-            Header {
-                language: language(),
-                theme: theme(),
-                on_toggle_theme: move |_| app_vm.launch_event(AppEvent::ToggleTheme),
-                on_set_language: move |l| app_vm.launch_event(AppEvent::SetLanguage(l)),
-            }
             NavigationComponent {}
-            Footer { language: language() }
         }
     }
 }
