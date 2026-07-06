@@ -17,7 +17,7 @@ const LANGUAGE_STORAGE_KEY: &str = "sf-language";
 
 // --- THEME ---------------------------------------------------------------
 
-/// The colour theme. `Light` is the default, matching the design's brief.
+/// The colour theme. `Dark` is the default until the user picks one.
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Theme {
     Light,
@@ -85,7 +85,7 @@ impl BaseViewModel for AppViewModel {
     type Event = AppEvent;
 
     fn create_initial_state() -> AppState {
-        AppState { language: Language::default(), theme: Theme::Light }
+        AppState { language: Language::default(), theme: Theme::Dark }
     }
 
     async fn handle_event(self, event: AppEvent) {
@@ -153,10 +153,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn initial_state_is_english_and_light() {
+    fn initial_state_is_english_and_dark() {
         let s = AppViewModel::create_initial_state();
         assert_eq!(s.language, Language::English);
-        assert_eq!(s.theme, Theme::Light);
+        assert_eq!(s.theme, Theme::Dark);
     }
 
     #[test]
