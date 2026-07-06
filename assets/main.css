@@ -777,3 +777,46 @@ body { margin: 0; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---- Loading skeletons (Projects) -------------------------------------- */
+
+/* Skeletons are divs, not links, but share .repo-card; kill interactivity so
+   the hover lift/glow can never trigger on a placeholder. */
+.repo-card-skeleton { pointer-events: none; }
+
+.skeleton-block {
+  position: relative;
+  display: block;
+  background: var(--bg-2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Shimmer: a soft highlight sweeping left→right across each block.
+   (Under prefers-reduced-motion the global kill-switch above stops it.) */
+.skeleton-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ink) 8%, transparent),
+    transparent
+  );
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* Block sizes mirror the real card anatomy (chip/pill, name, desc, cta). */
+.skeleton-chip  { width: 92px; height: 26px; border-radius: 999px; }
+.skeleton-pill  { width: 58px; height: 26px; border-radius: 999px; }
+.skeleton-title { width: 60%; height: 1.7rem; margin-top: 6px; }
+.skeleton-desc  { flex: 1; display: grid; gap: 9px; align-content: start; }
+.skeleton-line  { height: 0.95rem; }
+.skeleton-line-short { width: 80%; }
+.skeleton-cta   { width: 112px; height: 0.95rem; margin-top: 6px; }

@@ -2,7 +2,7 @@
 //!
 //! Renders only the routed `<main>` (the chrome is the router's `Scaffold`).
 //! Drives its own `ProjectsViewModel`, fires `Init` on first render to load the
-//! catalog through the use case, and renders Loading / the card grid / Error.
+//! catalog through the use case, and renders skeleton cards / the card grid / Error.
 
 use dioxus::prelude::*;
 
@@ -35,7 +35,7 @@ pub fn ProjectsScreen() -> Element {
             {
                 match status {
                     ProjectsStatus::Loading => rsx! {
-                        div { class: "projects-status", "{projects.loading}" }
+                        SkeletonCards { loading_label: projects.loading }
                     },
                     ProjectsStatus::Error => rsx! {
                         div { class: "projects-status", "{projects.error}" }
@@ -98,5 +98,39 @@ fn HostIcon(host: Host) -> Element {
                 path { d: "M12 11.6 8.2 19.5h7.6L12 11.6z", opacity: "0.55" }
             }
         },
+    }
+}
+
+/// Shimmer placeholders shown while the catalog loads. Reuses the loaded
+/// grid's wrapper and `repo-card` class so geometry, borders, and the
+/// `sf-rise` stagger match — the swap to real cards reads as filling-in.
+#[component]
+fn SkeletonCards(loading_label: &'static str) -> Element {
+    rsx! {
+        section { class: "section",
+            div {
+                class: "repo-grid",
+                role: "status",
+                aria_busy: "true",
+                aria_label: "{loading_label}",
+                for i in 0..4 {
+                    div {
+                        key: "{i}",
+                        class: "repo-card repo-card-skeleton",
+                        aria_hidden: "true",
+                        div { class: "repo-card-top",
+                            span { class: "skeleton-block skeleton-chip" }
+                            span { class: "skeleton-block skeleton-pill" }
+                        }
+                        div { class: "skeleton-block skeleton-title" }
+                        div { class: "skeleton-desc",
+                            div { class: "skeleton-block skeleton-line" }
+                            div { class: "skeleton-block skeleton-line skeleton-line-short" }
+                        }
+                        div { class: "skeleton-block skeleton-cta" }
+                    }
+                }
+            }
+        }
     }
 }

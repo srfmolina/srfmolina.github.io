@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Portfolio</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* Splash — inline so it paints with the first HTML parse, before any
+         network request. Covers both the wasm download and the CSS fetch;
+         removed by App (see SPLASH_DISMISS_JS in src/ui/app.rs).
+         Always dark — matching the app's default theme — with colors
+         hardcoded from the main.css dark --bg/--ink tokens. */
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: oklch(0.16 0.008 300);
+        transition: opacity 150ms ease;
+      }
+      #splash .splash-word {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: clamp(1.4rem, 4vw, 2rem);
+        letter-spacing: 0.02em;
+        color: oklch(0.97 0.002 300);
+        animation: splash-pulse 2.2s ease-in-out infinite;
+      }
+      #splash.splash-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @keyframes splash-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.45; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #splash .splash-word { animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash" aria-hidden="true">
+      <div class="splash-word">srfmolina</div>
+    </div>
+    <div id="main"></div>
+  </body>
+</html>
